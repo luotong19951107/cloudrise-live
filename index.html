@@ -11,27 +11,105 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='https://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E☁️%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css" />
     <script>
-        // 错误处理和兼容性脚本
+        // 强力错误处理和兼容性脚本
         window.addEventListener('error', function(e) {
-            // 静默处理扩展程序错误
-            if (e.message && e.message.includes('Extension')) {
+            // 静默处理所有扩展程序相关错误
+            if (e.message && (
+                e.message.includes('Extension') ||
+                e.message.includes('runtime.lastError') ||
+                e.message.includes('message channel') ||
+                e.message.includes('chrome-extension') ||
+                e.message.includes('moz-extension') ||
+                e.message.includes('listener indicated')
+            )) {
                 e.preventDefault();
+                e.stopPropagation();
                 return true;
             }
         });
         
         // 处理未捕获的Promise错误
         window.addEventListener('unhandledrejection', function(e) {
-            if (e.reason && e.reason.message && e.reason.message.includes('runtime')) {
+            if (e.reason && e.reason.message && (
+                e.reason.message.includes('runtime') ||
+                e.reason.message.includes('lastError') ||
+                e.reason.message.includes('message channel') ||
+                e.reason.message.includes('extension')
+            )) {
                 e.preventDefault();
                 return true;
             }
         });
         
+        // 重写console.error来过滤扩展程序错误
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('runtime.lastError') || 
+                message.includes('message channel') ||
+                message.includes('chrome-extension') ||
+                message.includes('listener indicated')) {
+                return; // 静默处理
+            }
+            originalConsoleError.apply(console, args);
+        };
+        
+        // 重写console.warn来过滤扩展程序警告
+        const originalConsoleWarn = console.warn;
+        console.warn = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('runtime.lastError') || 
+                message.includes('message channel') ||
+                message.includes('chrome-extension')) {
+                return; // 静默处理
+            }
+            originalConsoleWarn.apply(console, args);
+        };
+        
         // 确保Cloudflare脚本正确加载
         if (typeof window.__CF$cv$params === 'undefined') {
             window.__CF$cv$params = {};
         }
+        
+        // 处理Chrome扩展程序API错误
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+            const originalSendMessage = chrome.runtime.sendMessage;
+            chrome.runtime.sendMessage = function(...args) {
+                try {
+                    return originalSendMessage.apply(this, args);
+                } catch (e) {
+                    // 静默处理扩展程序通信错误
+                    return;
+                }
+            };
+        }
+        
+        // 页面加载完成后清理控制台中的扩展程序错误
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                // 尝试清理控制台（仅在开发环境有效）
+                if (typeof console.clear === 'function' && window.location.hostname === 'localhost') {
+                    console.clear();
+                }
+                
+                // 显示网站加载完成信息
+                console.log('%c✅ 擎云株式会社 网站加载完成', 'color: #10b981; font-weight: bold;');
+                console.log('%c🔒 安全配置: HTTPS + HSTS + CSP', 'color: #3b82f6;');
+                console.log('%c⚡ CDN: Cloudflare 加速', 'color: #f59e0b;');
+                
+                // 隐藏扩展程序错误提示
+                const style = document.createElement('style');
+                style.textContent = `
+                    /* 隐藏可能的错误提示 */
+                    .chrome-extension-error,
+                    .runtime-error,
+                    [data-extension-error] {
+                        display: none !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }, 1000);
+        });
     </script>
 </head>
 <body>
