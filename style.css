@@ -63,6 +63,9 @@ header {
     padding: 60px 40px;
     border-radius: 20px;
     -webkit-backdrop-filter: blur(10px);
+    -moz-backdrop-filter: blur(10px);
+    -ms-backdrop-filter: blur(10px);
+    -o-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     max-width: 800px;
     margin: 0 20px;
@@ -161,6 +164,9 @@ main {
 .service-card {
     background: rgba(255, 255, 255, 0.1);
     -webkit-backdrop-filter: blur(10px);
+    -moz-backdrop-filter: blur(10px);
+    -ms-backdrop-filter: blur(10px);
+    -o-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 40px 30px;
@@ -209,6 +215,9 @@ main {
 .company-info {
     background: rgba(255, 255, 255, 0.1);
     -webkit-backdrop-filter: blur(10px);
+    -moz-backdrop-filter: blur(10px);
+    -ms-backdrop-filter: blur(10px);
+    -o-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -236,6 +245,9 @@ table {
     border-collapse: collapse;
     background: rgba(255, 255, 255, 0.95);
     -webkit-backdrop-filter: blur(10px);
+    -moz-backdrop-filter: blur(10px);
+    -ms-backdrop-filter: blur(10px);
+    -o-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     overflow: hidden;
@@ -276,14 +288,27 @@ tr:last-child td {
 /* Access Section */
 .access-section {
     background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     padding: 40px;
     margin: 40px auto;
     max-width: 1000px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 支持backdrop-filter的浏览器 */
+@supports (backdrop-filter: blur(10px)) {
+    .access-section {
+        backdrop-filter: blur(10px);
+    }
+}
+
+/* 支持-webkit-backdrop-filter的浏览器 (Safari) */
+@supports (-webkit-backdrop-filter: blur(10px)) {
+    .access-section {
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
 }
 
 .access-section h2 {
