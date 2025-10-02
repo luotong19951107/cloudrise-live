@@ -3,20 +3,43 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https: *.cloudflare.com; img-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https:; connect-src 'self' https:; upgrade-insecure-requests; block-all-mixed-content">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: *.cloudflare.com blob: data:; img-src 'self' https: data: blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; connect-src 'self' https: wss: *.cloudflare.com; frame-src 'self' https:; upgrade-insecure-requests; block-all-mixed-content">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Cache-Control" content="public, max-age=3600, must-revalidate">
     <title>擎云株式会社 - 云の上に昇り、見たことのない世界を見る</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='https://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E☁️%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css" />
+    <script>
+        // 错误处理和兼容性脚本
+        window.addEventListener('error', function(e) {
+            // 静默处理扩展程序错误
+            if (e.message && e.message.includes('Extension')) {
+                e.preventDefault();
+                return true;
+            }
+        });
+        
+        // 处理未捕获的Promise错误
+        window.addEventListener('unhandledrejection', function(e) {
+            if (e.reason && e.reason.message && e.reason.message.includes('runtime')) {
+                e.preventDefault();
+                return true;
+            }
+        });
+        
+        // 确保Cloudflare脚本正确加载
+        if (typeof window.__CF$cv$params === 'undefined') {
+            window.__CF$cv$params = {};
+        }
+    </script>
 </head>
 <body>
 
 <header>
     <div class="header-content">
         <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80" alt="Cloud Technology" class="hero-bg">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80" alt="Cloud Technology" class="hero-bg" onerror="this.style.display='none'">
             <div class="hero-overlay">
                 <h1>擎云株式会社</h1>
                 <p class="company-kana">ケイウンカブシキカイシャ</p>
@@ -37,7 +60,7 @@
             <div class="services-grid">
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" alt="クラウド支援" class="service-image">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" alt="クラウド支援" class="service-image" onerror="this.style.display='none'">
                     </div>
                     <h3>クラウド導入支援</h3>
                     <p>AWS、Azure、GCPの導入・設計・運用を支援し、最適なクラウドソリューションを提供します。</p>
@@ -45,7 +68,7 @@
                 
                 <div class="service-card">
                     <div class="service-icon">
-                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80" alt="データ解析" class="service-image">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=80" alt="データ解析" class="service-image" onerror="this.style.display='none'">
                     </div>
                     <h3>データ解析</h3>
                     <p>ビッグデータ分析や可視化で業務改善・予測分析を支援します。</p>
