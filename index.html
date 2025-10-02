@@ -7,6 +7,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Cache-Control" content="public, max-age=3600, must-revalidate">
+    <meta name="extension-error-suppression" content="enabled">
     <title>擎云株式会社 - 云の上に昇り、見たことのない世界を見る</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='https://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E☁️%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css" />
@@ -84,18 +85,35 @@
             };
         }
         
+        // 更强力的Chrome扩展程序错误抑制
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.lastError) {
+            // 重写lastError属性
+            Object.defineProperty(chrome.runtime, 'lastError', {
+                get: function() { return null; },
+                set: function() { return; },
+                configurable: false
+            });
+        }
+        
+        // 拦截所有可能的扩展程序消息
+        window.addEventListener('message', function(event) {
+            if (event.source !== window && 
+                (event.origin.includes('chrome-extension') || 
+                 event.origin.includes('moz-extension'))) {
+                event.stopImmediatePropagation();
+                return false;
+            }
+        }, true);
+        
         // 页面加载完成后清理控制台中的扩展程序错误
         document.addEventListener('DOMContentLoaded', function() {
+            // 立即执行一次清理
             setTimeout(function() {
-                // 尝试清理控制台（仅在开发环境有效）
-                if (typeof console.clear === 'function' && window.location.hostname === 'localhost') {
-                    console.clear();
-                }
-                
                 // 显示网站加载完成信息
                 console.log('%c✅ 擎云株式会社 网站加载完成', 'color: #10b981; font-weight: bold;');
                 console.log('%c🔒 安全配置: HTTPS + HSTS + CSP', 'color: #3b82f6;');
                 console.log('%c⚡ CDN: Cloudflare 加速', 'color: #f59e0b;');
+                console.log('%c🚫 扩展程序错误已被静默处理', 'color: #6b7280; font-style: italic;');
                 
                 // 隐藏扩展程序错误提示
                 const style = document.createElement('style');
@@ -108,7 +126,18 @@
                     }
                 `;
                 document.head.appendChild(style);
-            }, 1000);
+            }, 500);
+            
+            // 定期清理扩展程序错误（每5秒）
+            setInterval(function() {
+                // 检查并清理可能的错误元素
+                const errorElements = document.querySelectorAll('[class*="extension"], [class*="runtime"], [id*="extension"]');
+                errorElements.forEach(el => {
+                    if (el.textContent && el.textContent.includes('runtime.lastError')) {
+                        el.style.display = 'none';
+                    }
+                });
+            }, 5000);
         });
     </script>
 </head>
